@@ -1,0 +1,6 @@
+{
+  "name": "Yes or No",
+  "description": "Magic Decision Maker with funny answers, animations, and history.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

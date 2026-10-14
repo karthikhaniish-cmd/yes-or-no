@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>YES OR NO? — Magic Decision Maker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient background canvas for glowing particles & stars -->
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- Clear History Confirmation Modal -->
+  <div id="confirm-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-icon">⚠️</div>
+      <h3 id="modal-title">Clear All History?</h3>
+      <p>Are you sure you want to erase all your past cosmic answers? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="cancel-clear-btn" class="btn btn-secondary">Cancel</button>
+        <button id="confirm-clear-btn" class="btn btn-danger">Yes, Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <a href="#home" class="logo" aria-label="Yes or No Magic Decision Maker Home">
+          <span class="logo-ball" aria-hidden="true">🎱</span>
+          <span class="logo-text">YES OR NO?</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#home" class="nav-link active">Home</a>
+          <a href="#history" class="nav-link">History</a>
+          <a href="#about" class="nav-link">About</a>
+        </nav>
+
+        <div class="fun-mode-control">
+          <label class="toggle-switch" for="funny-mode-toggle" title="Toggle Extra Funny Mode">
+            <input type="checkbox" id="funny-mode-toggle" aria-label="Toggle Extra Funny Mode">
+            <span class="slider"></span>
+          </label>
+          <span class="mode-label" id="funny-mode-label">
+            <span class="mode-icon" aria-hidden="true">😂</span>
+            <span class="mode-text">Extra Funny</span>
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Hero Section -->
+      <section id="home" class="hero-section">
+        <div class="hero-content">
+          <div class="badge-pill">
+            <span class="sparkle-icon" aria-hidden="true">✨</span>
+            <span>Mystical Oracle & Decision Companion</span>
+          </div>
+
+          <h1 class="hero-title">
+            Questions in Your Mind?<br>
+            <span class="gradient-text">Let's Find Out!</span>
+          </h1>
+          <p class="hero-subtitle">
+            Ask anything. Trust the magic. Expect the unexpected.
+          </p>
+
+          <!-- Interactive Magic 8-Ball Display -->
+          <div class="ball-stage">
+            <div class="magic-aura" aria-hidden="true"></div>
+            <div id="magic-ball" class="magic-ball" tabindex="0" role="img" aria-label="Magic 8-Ball waiting for your question">
+              <div class="ball-highlight"></div>
+              <div class="ball-window">
+                <div id="window-content" class="window-content state-idle">
+                  <span class="ball-number">8</span>
+                </div>
+              </div>
+            </div>
+            <!-- Loading state indicator -->
+            <div id="loading-indicator" class="loading-container hidden" aria-live="polite">
+              <div class="mystic-spinner" aria-hidden="true"></div>
+              <p id="loading-text" class="loading-text">Consulting the universe...</p>
+            </div>
+          </div>
+
+          <!-- Question Input Box -->
+          <div class="input-card">
+            <form id="question-form" novalidate>
+              <div class="input-wrapper">
+                <label for="question-input" class="sr-only">Type your question</label>
+                <input
+                  type="text"
+                  id="question-input"
+                  name="question"
+                  class="question-input"
+                  placeholder="Type your question here... (e.g. Will I succeed?)"
+                  maxlength="120"
+                  autocomplete="off"
+                  required
+                >
+                <div class="char-counter" id="char-counter" aria-live="polite">0 / 120</div>
+              </div>
+              <div id="input-error" class="input-error-msg hidden" role="alert"></div>
+
+              <div class="button-group">
+                <button type="submit" id="ask-btn" class="btn btn-primary btn-glow">
+                  <span class="btn-text">ASK THE MAGIC</span>
+                  <span class="btn-icon" aria-hidden="true">🎱</span>
+                </button>
+                <button type="button" id="surprise-btn" class="btn btn-secondary btn-surprise">
+                  <span class="btn-text">SURPRISE ME</span>
+                  <span class="btn-icon" aria-hidden="true">🎲</span>
+                </button>
+              </div>
+            </form>
+
+            <!-- Suggested Question Chips -->
+            <div class="chips-container" aria-label="Sample questions">
+              <span class="chips-label">Try asking:</span>
+              <div class="chips-grid">
+                <button type="button" class="chip-btn" data-question="Will I have a great day?">
+                  ✨ Will I have a great day?
+                </button>
+                <button type="button" class="chip-btn" data-question="Should I start learning coding?">
+                  💻 Should I start learning coding?
+                </button>
+                <button type="button" class="chip-btn" data-question="Will I finish my project today?">
+                  🚀 Will I finish my project today?
+                </button>
+                <button type="button" class="chip-btn" data-question="Should I watch a movie?">
+                  🍿 Should I watch a movie?
+                </button>
+                <button type="button" class="chip-btn" data-question="Should I order pizza tonight?">
+                  🍕 Should I order pizza tonight?
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Answer Card (Revealed after asking) -->
+          <div id="answer-card" class="answer-card hidden" aria-live="polite">
+            <div class="answer-card-header">
+              <span class="question-badge">Your Question</span>
+              <p id="result-question" class="result-question-text"></p>
+            </div>
+
+            <div class="answer-card-body">
+              <div class="result-ball-badge" id="result-ball-icon">🔮</div>
+              <h2 id="result-answer" class="result-answer-text"></h2>
+              <div class="result-divider"></div>
+              <p id="result-explanation" class="result-explanation-text"></p>
+            </div>
+
+            <div class="answer-card-actions">
+              <button type="button" id="ask-another-btn" class="btn btn-primary btn-sm">
+                <span>Ask Another</span> 🔄
+              </button>
+              <button type="button" id="copy-btn" class="btn btn-secondary btn-sm" title="Copy answer to clipboard">
+                <span>Copy Answer</span> 📋
+              </button>
+              <button type="button" id="share-btn" class="btn btn-secondary btn-sm" title="Share your fortune">
+                <span>Share</span> 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- History Section -->
+      <section id="history" class="history-section">
+        <div class="section-container">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">📜 Cosmic History</h2>
+              <p class="section-subtitle">Your recent 10 questions and oracle revelations</p>
+            </div>
+            <button type="button" id="clear-history-btn" class="btn btn-outline-danger btn-sm">
+              <span>Clear History</span> 🗑️
+            </button>
+          </div>
+
+          <!-- Empty History State -->
+          <div id="empty-history" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">🌌</div>
+            <h3>No questions asked yet</h3>
+            <p>The universe is patiently awaiting your curiosity. Ask a question above to start recording history!</p>
+          </div>
+
+          <!-- History Items Grid -->
+          <div id="history-list" class="history-grid hidden"></div>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="about-section">
+        <div class="section-container">
+          <div class="about-card">
+            <div class="about-icon" aria-hidden="true">✨🎱🔮</div>
+            <h2 class="about-title">About YES OR NO?</h2>
+            <p class="about-desc">
+              <strong>YES OR NO? — Magic Decision Maker</strong> is a fun, whimsical decision-making companion built to bring spontaneous joy, hearty laughs, and cosmic clarity to your everyday dilemmas.
+            </p>
+            <div class="about-features-grid">
+              <div class="feature-item">
+                <span class="feature-icon">🎲</span>
+                <h4>Pure Randomness</h4>
+                <p>Powered by local JavaScript randomization. No bias, no mind reading, only pure chaotic fortune.</p>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">🔒</span>
+                <h4>100% Private</h4>
+                <p>Everything runs strictly in your browser and saves to LocalStorage. No tracking or servers.</p>
+              </div>
+              <div class="feature-item">
+                <span class="feature-icon">😂</span>
+                <h4>Extra Funny Mode</h4>
+                <p>Toggle for outrageous explanations, sarcastic wisdom, and playful humor whenever you need a smile.</p>
+              </div>
+            </div>
+
+            <div class="disclaimer-box">
+              <span class="disclaimer-badge">⚠️ Disclaimer</span>
+              <p>
+                <strong>For entertainment purposes only.</strong> The Magic 8-Ball cannot be held liable for sudden pizza cravings, questionable hairstyle decisions, or funny excuses. Please consult real experts for actual life-altering decisions!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="footer-logo">🎱 YES OR NO?</div>
+        <p class="footer-tagline">Made for curious minds ✨</p>
+        <p class="footer-copyright">© 2026 Magic Decision Maker. Pure client-side magic.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
